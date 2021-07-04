@@ -6,12 +6,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 
 class MainViewModel(
-    private val stopwatch: Stopwatch = Stopwatch()
-) : ViewModel(), Stopwatch by stopwatch {
-    override val time = stopwatch.time
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = 0L
-        )
+    private val timer: Timer = Timer(2_000)
+) : ViewModel(), Stopwatch by timer {
+    override val time = timer.time.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000L),
+        initialValue = 0L
+    )
 }
