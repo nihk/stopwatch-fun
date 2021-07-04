@@ -1,5 +1,6 @@
 package com.example.stopwatch_fun
 
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,7 +9,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.isActive
-import kotlin.coroutines.coroutineContext
 
 interface Stopwatch {
     val time: Flow<Long>
@@ -32,7 +32,7 @@ interface Stopwatch {
                 Action.Start -> {
                     val time = flow {
                         val initial = currentTime() - elapsedTime
-                        while (coroutineContext.isActive) {
+                        while (currentCoroutineContext().isActive) {
                             elapsedTime = currentTime() - initial
                             emit(elapsedTime)
                             delay(tick)
