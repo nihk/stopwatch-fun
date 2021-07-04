@@ -29,11 +29,6 @@ interface Stopwatch {
 
         override val time: Flow<Long> = actions.flatMapLatest { action ->
             when (action) {
-                Action.Pause -> flowOf(elapsedTime)
-                Action.Reset -> {
-                    elapsedTime = 0L
-                    flowOf(elapsedTime)
-                }
                 Action.Start -> {
                     val time = flow {
                         val initial = currentTime() - elapsedTime
@@ -45,7 +40,16 @@ interface Stopwatch {
                     }
                     time.conflate()
                 }
+                Action.Pause -> flowOf(elapsedTime)
+                Action.Reset -> {
+                    elapsedTime = 0L
+                    flowOf(elapsedTime)
+                }
             }
+        }
+
+        override fun start() {
+            actions.value = Action.Start
         }
 
         override fun pause() {
@@ -56,10 +60,6 @@ interface Stopwatch {
             actions.value = Action.Reset
             // Optionally switch back to the previous Action state here, after the above line,
             // e.g. if you want Reset to not stop the timer, just the elapsed time.
-        }
-
-        override fun start() {
-            actions.value = Action.Start
         }
 
         private enum class Action {
